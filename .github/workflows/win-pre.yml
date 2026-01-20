@@ -48,7 +48,7 @@ jobs:
       # 7. 执行构建 (根据文档命令)
       # 这里默认构建 x64 版本，如果需要构建 ARM64 请改为 pnpm run publish:win32-arm64
       - name: Build Windows App
-        run: pnpm run publish:win32
+        run: pnpm run publish:packages
 
       # 8. 上传构建产物
       # 这里的 path: out/* 对应 Electron Builder 默认输出目录
