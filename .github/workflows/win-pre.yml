@@ -24,7 +24,7 @@ jobs:
         with:
           version: '9'
 
-      # 4. 配置 Git (防止构建脚本中的 git commit 报错)
+      # 4. 配置 Git
       - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
@@ -50,15 +50,21 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # 8. 执行构建 (修改为 publish:packages)
+      # 8. 【关键修复】伪造一个文件变更，欺骗 commit 脚本
+      # 这样可以防止 "nothing to commit" 错误，让构建继续进行
+      - name: Force staged changes
+        run: |
+          echo "build-date=$(date)" > BUILD_INFO.txt
+          git add BUILD_INFO.txt
+
+      # 9. 执行构建
       - name: Build Packages
         run: pnpm run publish:packages
 
-      # 9. 上传构建产物 (保留时间修改为 3 天)
+      # 10. 上传构建产物
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-packages
-          # 注意：请确认 publish:packages 的输出目录是否依然是 out，如果不是请修改此处
           path: out/*
           retention-days: 3
